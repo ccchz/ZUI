@@ -102,7 +102,13 @@ ZEXPORT ZuiAny ZCALL ZuiButtonProc(ZuiInt ProcId, ZuiControl cp, ZuiButton p, Zu
     }
     case Proc_OnPaintStatusImage: {
         ZuiGraphics gp = (ZuiGraphics)Param1;
-        ZRect *rc = (ZRect *)&cp->m_rcItem;
+        ZRect rc2,*rc;
+        ZRect *rc1 = (ZRect *)&cp->m_rcItem;
+        rc = &rc2;
+        rc2.left = rc1->left + p->m_rcPadding.left;
+        rc2.top = rc1->top + p->m_rcPadding.top;
+        rc2.right = rc1->right - p->m_rcPadding.right;
+        rc2.bottom = rc1->bottom - p->m_rcPadding.bottom;
         ZuiImage img;
         if (p->type == 0) {
             if (p->m_BtnRes) {
@@ -181,6 +187,11 @@ ZEXPORT ZuiAny ZCALL ZuiButtonProc(ZuiInt ProcId, ZuiControl cp, ZuiButton p, Zu
         ZuiControlInvalidate(cp,TRUE);
         return 0;
     }
+    case Proc_Button_SetPadding: {
+        memcpy(&p->m_rcPadding, Param1, sizeof(ZRect));
+        ZuiControlNeedUpdate(cp);
+        return 0;
+    }
     case Proc_SetAnimation: {
         if (cp->m_aAnime)
             ZuiAnimationFree(cp->m_aAnime);
@@ -202,6 +213,15 @@ ZEXPORT ZuiAny ZCALL ZuiButtonProc(ZuiInt ProcId, ZuiControl cp, ZuiButton p, Zu
                 p->m_rcBtn[i].right = rcTmp.right;
                 p->m_rcBtn[i].bottom = rcTmp.bottom;
             }
+        }
+        else if (wcscmp(Param1, L"buttonpadding") == 0) {
+            ZRect rcPadding = { 0 };
+            ZuiText pstr = NULL;
+            rcPadding.left = _tcstol(Param2, &pstr, 10);  ASSERT(pstr);
+            rcPadding.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+            rcPadding.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
+            rcPadding.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
+            ZuiControlCall(Proc_Button_SetPadding, cp, &rcPadding, NULL, NULL);
         }
         else if (wcscmp(Param1, L"btnres") == 0)
             ZuiControlCall(Proc_Button_SetRes, cp, ZuiResDBGetRes(Param2, ZREST_IMG), NULL, NULL);

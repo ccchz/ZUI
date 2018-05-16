@@ -15,7 +15,7 @@ typedef struct _ZButton
 {
     ZuiRes m_BtnRes;
     ZRect  m_rcBtn[4];
-
+    ZRect  m_rcPadding;
 
     ZuiColor m_ColorNormal;     //正常状态
     ZuiColor m_ColorHot;        //高亮状态

@@ -23,7 +23,13 @@ ZEXPORT ZuiAny ZCALL ZuiOptionProc(ZuiInt ProcId, ZuiControl cp, ZuiOption p, Zu
     }
     case Proc_OnPaint: {
         ZuiGraphics gp = (ZuiGraphics)Param1;
-        ZRect *rc = &cp->m_rcItem;
+        ZRect rc2, *rc;
+        ZRect *rc1 = (ZRect *)&cp->m_rcItem;
+        rc = &rc2;
+        rc2.left = rc1->left + ((ZuiButton)p->old_udata)->m_rcPadding.left;
+        rc2.top = rc1->top + ((ZuiButton)p->old_udata)->m_rcPadding.top;
+        rc2.right = rc1->right - ((ZuiButton)p->old_udata)->m_rcPadding.right;
+        rc2.bottom = rc1->bottom - ((ZuiButton)p->old_udata)->m_rcPadding.bottom;
         if (p->m_bSelected) {
             ZuiImage img;
             if (((ZuiButton)p->old_udata)->type == 0) {
@@ -82,7 +88,7 @@ ZEXPORT ZuiAny ZCALL ZuiOptionProc(ZuiInt ProcId, ZuiControl cp, ZuiOption p, Zu
                     ZuiControl pControl;
                     if ((pControl = ZuiControlCall(Proc_Layout_GetItemAt, cp->m_pParent, (ZuiAny)i, NULL, NULL)) != cp)
                     {
-                        if (pControl != cp) {
+                        if (pControl != cp && ZuiControlCall(Proc_Option_GetGroup, pControl,0,0,0)) {
                             ZuiControlCall(Proc_Option_SetSelected, pControl, FALSE, NULL, NULL);
                         }
 
@@ -98,7 +104,7 @@ ZEXPORT ZuiAny ZCALL ZuiOptionProc(ZuiInt ProcId, ZuiControl cp, ZuiOption p, Zu
                     ZuiControl pControl;
                     if ((pControl = ZuiControlCall(Proc_Layout_GetItemAt, cp->m_pParent, (ZuiAny)i, NULL, NULL)) != cp)
                     {
-                        if (pControl != cp) {
+                        if (pControl != cp && ZuiControlCall(Proc_Option_GetGroup, pControl, 0, 0, 0)) {
                             select += ZuiControlCall(Proc_Option_GetSelected, pControl, NULL, NULL, NULL) ? 1 : 0;
                         }
 
@@ -127,7 +133,10 @@ ZEXPORT ZuiAny ZCALL ZuiOptionProc(ZuiInt ProcId, ZuiControl cp, ZuiOption p, Zu
     }
     case Proc_Option_SetGroup: {
         p->m_bGroup = (ZuiBool)Param1;
-        break;
+        return 0;
+    }
+    case Proc_Option_GetGroup: {
+        return (ZuiAny)p->m_bGroup;
     }
     case Proc_Option_GetSelected: {
         return (ZuiAny)p->m_bSelected;

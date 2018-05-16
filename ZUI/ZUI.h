@@ -388,6 +388,7 @@ enum ZREST
 #define Type_Button                 0x5e7331d7
 
 #define Proc_Button_SetRes    201    //
+#define Proc_Button_SetPadding    202
 //#define Proc_Button_SetResHot       202    //高亮状态
 //#define Proc_Button_SetResPushed    203    //按下状态
 //#define Proc_Button_SetResFocused   204    //焦点图片
@@ -509,6 +510,7 @@ enum ZREST
 //#define Proc_Option_SetResSelectedHot       1034    //选中的点燃状态
 //#define Proc_Option_SetResSelectedPushed    1035    //选中的按下状态
 #define Proc_Option_SetGroup                1036
+#define Proc_Option_GetGroup                1037
 //------属性名称
 #define Option_SN_Color      0x00000001 //选中普通颜色
 #define Option_SH_Color      0x00000002 //选中高亮颜色
